@@ -1,9 +1,10 @@
+const { Brand } = require("../../models/brand.model");
 const { Category } = require("../../models/category.model");
 const { Inventory } = require("../../models/inventory.model");
 const { Product } = require("../../models/product.model");
-const { getCategory, getInventories, getProduct } = require("./merged");
+const { getCategory, getInventories, getProduct, getBrand } = require("./merged");
 
-exports.productResolver = {
+exports.productQuery = {
   // Queries
   products: async () => {
     try {
@@ -12,8 +13,9 @@ exports.productResolver = {
         return {
           ...product._doc,
           _id: product.id,
+          brand: getBrand.bind(this, product.brand), // use the get category function
           category: getCategory.bind(this, product.category),
-          inventory: getInventories.bind(this, product.inventory)
+          inventory: getInventories.bind(this, product.inventory),
         };
       });
 
@@ -25,13 +27,14 @@ exports.productResolver = {
   getProduct: async (args) => {
     try {
       const product = await Product.findOne({
-        slug: args.getProductInput.slug
+        slug: args.getProductInput.slug,
       });
       const result = {
         ...product._doc,
         _id: product.id,
+        brand: getBrand.bind(this, product.brand), // use the get category function
         category: getCategory.bind(this, product.category),
-        inventory: getInventories.bind(this, product.inventory)
+        inventory: getInventories.bind(this, product.inventory),
       };
 
       return result;
@@ -46,7 +49,7 @@ exports.productResolver = {
         return {
           ...inventory._doc,
           _id: inventory.id,
-          product: getProduct.bind(this, inventory.product)
+          product: getProduct.bind(this, inventory.product),
         };
       });
 
@@ -57,35 +60,38 @@ exports.productResolver = {
   },
   productInventories: async (args) => {
     const inventories = await Inventory.find({
-      product: { $in: args.productInventoryInput._id }
+      product: { $in: args.productInventoryInput._id },
     });
     let result = inventories.map((inventory) => {
       return {
         ...inventory._doc,
         _id: inventory.id,
-        product: getProduct.bind(this, inventory.product)
+        product: getProduct.bind(this, inventory.product),
       };
     });
     return result;
   },
+};
+exports.productMutation = {
   // Mutations
-  addProduct: async (args) => {
+  addProduct: async (parant, args) => {
     try {
       const product = new Product({
-        slug: args.productInput.slug,
-        image: args.productInput.image,
-        imageID: args.productInput.imageID,
-        name: args.productInput.name,
-        price: args.productInput.price,
-        category: args.productInput.category,
-        description: args.productInput.description,
-        feature: args.productInput.feature,
-        featureImage: args.productInput.featureImage,
-        featureImageID: args.productInput.featureImageID
+        slug: args.slug,
+        image: args.image,
+        imageID: args.imageID,
+        name: args.name,
+        price: args.price,
+        category: args.category,
+        brand: args.brand,
+        description: args.description,
+        feature: args.feature,
+        featureImage: args.featureImage,
+        featureImageID: args.featureImageID
       });
       const result = await product.save();
       // find category in the database
-      const findCategory = await Category.findById(args.productInput.category);
+      const findCategory = await Category.findById(args.category);
       // check if it doesn't exists
       if (!findCategory) {
         throw new Error("Category does not exist in database");
@@ -93,13 +99,22 @@ exports.productResolver = {
       // push the product ID to the find category collection
       await findCategory.products.push(product);
       await findCategory.save();
+      // find brand in the database
+      const findBrand = await Brand.findById(args.brand);
+      // check if it doesn't exists
+      if (!findBrand) {
+        throw new Error("Brand does not exist in database");
+      }
+      // push the product ID to the find category collection
+      await findBrand.products.push(product);
+      await findBrand.save();
       return { ...result._doc, _id: result._doc._id.toString() };
     } catch (error) {
       console.log(error);
       throw error;
     }
   },
-  addInventory: async (args) => {
+  addInventory: async (parant, args) => {
     try {
       const inventory = new Inventory({
         product: args.inventoryInput.product,

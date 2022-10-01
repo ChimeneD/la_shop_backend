@@ -3,8 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const { schema } = require("./graphql/schema");
-const { rootResolver } = require("./graphql/resolvers");
+const { typeDefs } = require("./graphql/schema");
+const { resolvers } = require("./graphql/resolvers");
 const { ApolloServer } = require("apollo-server-express");
 
 const dotenv = require("dotenv");
@@ -23,19 +23,19 @@ const dotenv = require("dotenv");
 
   //creating apollo server
   const server = new ApolloServer({
-    schema,
-    rootResolver,
-    introspection: true,
-    formatError: (error) => {
-      return error;
-    },
-    graphiql: true,
-    context: ({ req, res }) => {
-      return {
-        req,
-        res
-      };
-    }
+    typeDefs,
+    resolvers
+    // introspection: true,
+    // formatError: (error) => {
+    //   return error;
+    // },
+    // graphiql: true,
+    // context: ({ req, res }) => {
+    //   return {
+    //     req,
+    //     res
+    //   };
+    // }
   });
   await server.start();
   server.applyMiddleware({ app, path: "/api" });
@@ -44,23 +44,6 @@ const dotenv = require("dotenv");
   app.get("/", (req, res) => {
     res.send("Express + TypeScript Server is running on port => " + PORT);
   });
-  // app.use(
-  //   "/api",
-  //   graphqlHTTP((req, res) => {
-  //     return {
-  //       schema: schema,
-  //       rootValue: rootResolver,
-  //       graphiql: true,
-  //       customFormatErrorFn: (error) => {
-  //         return error;
-  //       },
-  //       context: {
-  //         req: req,
-  //         res: res
-  //       }
-  //     };
-  //   })
-  // );
   app.listen(PORT, () => {
     console.log(`🚀 server started on http://localhost:${PORT}`);
   });

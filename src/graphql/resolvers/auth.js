@@ -2,11 +2,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { User } = require("../../models/user.model");
 
-exports.authResolver = {
-  loginUser: async (args) => {
-    let argData = args.loginInput;
+exports.authQuery = {
+  loginUser: async (parent, args) => {
     //find staff in the database
-    const user = await User.findOne({ email: argData.email });
+    const user = await User.findOne({ email: args.email });
     //check if the user exists
     if (user) {
       //create token
@@ -25,7 +24,7 @@ exports.authResolver = {
       );
       const tokenExpiration = 4;
       //verify password
-      const checkPassword = bcrypt.compareSync(argData.password, user.password);
+      const checkPassword = bcrypt.compareSync(args.password, user.password);
       //if password is verified
       if (checkPassword) {
         return {
@@ -41,15 +40,18 @@ exports.authResolver = {
     } else {
       throw new Error(`Account does not exist!`);
     }
-  },
-  createAccount: async (args) => {
-    const hashPassword = bcrypt.hashSync(args.userInput.password, 10);
+  }
+};
+
+exports.authMutation = {
+  createAccount: async (parent, args) => {
+    const hashPassword = bcrypt.hashSync(args.password, 10);
     //create customer object
     let user = new User({
-      firstName: args.userInput.firstName,
-      lastName: args.userInput.lastName,
-      role: args.userInput.role,
-      email: args.userInput.email,
+      firstName: args.firstName,
+      lastName: args.lastName,
+      role: args.role,
+      email: args.email,
       password: hashPassword
     });
 

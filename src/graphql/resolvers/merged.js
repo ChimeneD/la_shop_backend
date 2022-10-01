@@ -3,7 +3,21 @@ const { Inventory } = require("../../models/inventory.model");
 const { Product } = require("../../models/product.model");
 const { User } = require("../../models/user.model");
 const { Order } = require("../../models/order.model");
+const { Brand } = require("../../models/brand.model");
 
+exports.getBrand = async (_id) => {
+  try {
+    const brand = await Brand.findById(_id);
+    let result = {
+      ...brand._doc,
+      _id: brand.id,
+      products: getProducts.bind(this, brand.products)
+    };
+    return result;
+  } catch (err) {
+    throw err;
+  }
+};
 exports.getCategory = async (_id) => {
   try {
     const category = await Category.findById(_id);
@@ -68,14 +82,16 @@ exports.getProduct = async (_id) => {
     let result = {
       ...product._doc,
       _id: product.id,
+      brand: this.getBrand.bind(this, product.brand), // use the get brand function
       category: this.getCategory.bind(this, product.category), // use the get category function
-      inventory: getInventories.bind(this, product.inventory)
+      inventory: getInventories.bind(this, product.inventory),
     };
     return result;
   } catch (err) {
     throw err;
   }
 };
+
 exports.getProducts = async (_ids) => {
   try {
     const products = await Product.find({
@@ -85,8 +101,9 @@ exports.getProducts = async (_ids) => {
       return {
         ...product._doc,
         _id: product.id,
+        brand: this.getBrand.bind(this, product.brand), // use the get category function
         category: this.getCategory.bind(this, product.category), // use the get category function
-        inventory: getInventories.bind(this, product.inventory)
+        inventory: getInventories.bind(this, product.inventory),
       };
     });
     return result;
