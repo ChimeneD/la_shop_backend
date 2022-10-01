@@ -28,11 +28,13 @@ const dotenv = require("dotenv");
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    introspection: true,
+    cors: {
+      origin: "*", // <- allow request from all domains
+      credentials: true,
+    },
     formatError: (error) => {
       return error;
     },
-    graphiql: true,
     context: ({ req, res }) => {
       return {
         req,
@@ -41,7 +43,7 @@ const dotenv = require("dotenv");
     },
   });
   await server.start();
-  server.applyMiddleware({ app, cors:false, path: "/api" });
+  server.applyMiddleware({ app, path: "/api" });
 
   //run the server
   app.get("/", (req, res) => {
