@@ -12,15 +12,12 @@ const dotenv = require("dotenv");
   dotenv.config();
   const PORT = process.env.PORT || 5000;
   const app = express();
-  const corsOptions = {
-    origin: [
-      "http://localhost:3000",
-      "https://la-shop.vercel.app",
-      "https://la-shop-chimened.vercel.app",
-    ],
-  };
   app.use(bodyParser.json());
-
+  app.use(
+    cors({
+      origin: "*",
+    }),
+  );
   mongoose.connect(`${process.env.MONGO_URI}`);
   const connection = mongoose.connection;
   connection.once("open", () => {
@@ -31,20 +28,20 @@ const dotenv = require("dotenv");
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    // introspection: true,
-    // formatError: (error) => {
-    //   return error;
-    // },
-    // graphiql: true,
-    // context: ({ req, res }) => {
-    //   return {
-    //     req,
-    //     res
-    //   };
-    // }
+    introspection: true,
+    formatError: (error) => {
+      return error;
+    },
+    graphiql: true,
+    context: ({ req, res }) => {
+      return {
+        req,
+        res,
+      };
+    },
   });
   await server.start();
-  server.applyMiddleware({ app, cors: corsOptions, path: "/api" });
+  server.applyMiddleware({ app, path: "/api" });
 
   //run the server
   app.get("/", (req, res) => {
