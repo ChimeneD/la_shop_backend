@@ -41,7 +41,7 @@ const dotenv = require("dotenv");
     },
   });
   await server.start();
-  server.applyMiddleware({ app, path: "/api" });
+  server.applyMiddleware({ app, cors:false, path: "/api" });
 
   //run the server
   app.get("/", (req, res) => {
