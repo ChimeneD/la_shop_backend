@@ -48,8 +48,7 @@ const dotenv = require("dotenv");
     typeDefs,
     resolvers,
     cors: {
-      origin: "*", // <- allow request from all domains
-      credentials: true,
+      origin: "*"
     },
     formatError: (error) => {
       return error;
