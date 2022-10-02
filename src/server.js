@@ -12,12 +12,8 @@ const dotenv = require("dotenv");
   dotenv.config();
   const PORT = process.env.PORT || 5000;
   const app = express();
-  const corsOptions = {
-    origin: "*",
-    credentials: true, // <-- REQUIRED backend setting
-  };
   app.use(bodyParser.json());
-  app.use(cors(corsOptions));
+  app.use(cors());
   mongoose.connect(`${process.env.MONGO_URI}`);
   const connection = mongoose.connection;
   connection.once("open", () => {
