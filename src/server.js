@@ -40,10 +40,7 @@ const dotenv = require("dotenv");
   await server.start();
   server.applyMiddleware({
     app,
-    cors: {
-      origin: "*",
-      credentials: true,
-    },
+    cors: false,
     path: "/api",
   });
   app.listen(PORT, () => {
