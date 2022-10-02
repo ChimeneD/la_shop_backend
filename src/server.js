@@ -13,7 +13,11 @@ const dotenv = require("dotenv");
   const PORT = process.env.PORT || 5000;
   const app = express();
   app.use(bodyParser.json());
-  app.use(cors());
+  // app.use(cors({
+  //   origin: "*",
+  //   credentials: true,
+  //   methods: ["GET", "POST", "PUT", "DELETE"]
+  // }));
   mongoose.connect(`${process.env.MONGO_URI}`);
   const connection = mongoose.connection;
   connection.once("open", () => {
@@ -24,9 +28,6 @@ const dotenv = require("dotenv");
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    cors: {
-      origin: "*"
-    },
     formatError: (error) => {
       return error;
     },
@@ -38,7 +39,15 @@ const dotenv = require("dotenv");
     },
   });
   await server.start();
-  server.applyMiddleware({ app, cors: false, path: "/api" });
+  server.applyMiddleware({
+    app,
+    cors: {
+      origin: "*",
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE"],
+    },
+    path: "/api",
+  });
   app.listen(PORT, () => {
     console.log(`🚀 server started on http://localhost:${PORT}`);
   });
