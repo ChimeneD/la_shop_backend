@@ -1,6 +1,5 @@
 const bodyParser = require("body-parser");
 const express = require("express");
-const cors = require("cors");
 const mongoose = require("mongoose");
 
 const { typeDefs } = require("./graphql/schema");
@@ -44,7 +43,6 @@ const dotenv = require("dotenv");
     cors: {
       origin: "*",
       credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE"],
     },
     path: "/api",
   });
