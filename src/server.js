@@ -23,6 +23,7 @@ const dotenv = require("dotenv");
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    cache:"bounded",
     formatError: (error) => {
       return error;
     },
