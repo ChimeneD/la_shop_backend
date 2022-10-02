@@ -1,6 +1,7 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const { typeDefs } = require("./graphql/schema");
 const { resolvers } = require("./graphql/resolvers");
@@ -12,11 +13,6 @@ const dotenv = require("dotenv");
   const PORT = process.env.PORT || 5000;
   const app = express();
   app.use(bodyParser.json());
-  // app.use(cors({
-  //   origin: "*",
-  //   credentials: true,
-  //   methods: ["GET", "POST", "PUT", "DELETE"]
-  // }));
   mongoose.connect(`${process.env.MONGO_URI}`);
   const connection = mongoose.connection;
   connection.once("open", () => {
@@ -43,6 +39,12 @@ const dotenv = require("dotenv");
     cors: false,
     path: "/api",
   });
+  app.use(
+     cors({
+       origin: "*",
+       credentials: true,
+     }),
+  );
   app.listen(PORT, () => {
     console.log(`🚀 server started on http://localhost:${PORT}`);
   });
