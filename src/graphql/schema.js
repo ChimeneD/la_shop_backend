@@ -62,11 +62,6 @@ exports.typeDefs = gql`
     name: String
     products: [Product!]
   }
-  type Inventory {
-    _id: ID
-    product: Product
-    stock: Int
-  }
   type Item {
     product: Product
     count: Int
@@ -84,10 +79,11 @@ exports.typeDefs = gql`
     name: String
     slug: String
     price: Float
+    stock: Int
     rating: Float
+    brand: Brand
     category: Category
     description: String
-    inventory: [Inventory!]
   }
   type User {
     _id: ID
@@ -108,26 +104,22 @@ exports.typeDefs = gql`
 
   type Query {
     getProduct(getProductInput: GetProductInput): Product
-    inventories: [Inventory!]
     loginUser(email: String!, password: String!): UserAuth
     products: [Product!]
     categories: [Category!]
     brands: [Brand!]
-    productInventories(
-      productInventoryInput: ProductInventoryInput
-    ): [Inventory!]
   }
 
   type Mutation {
     addCategory(name: String!): Category
     addBrand(name: String!): Brand
-    addInventory(inventoryInput: InventoryInput): Inventory
     addProduct(
       name: String!,
       slug: String!,
       image: String!,
       imageID: String!,
       price: Float!,
+      stock: Int!,
       description: String!,
       brand: String!,
       category: String!,
@@ -136,6 +128,8 @@ exports.typeDefs = gql`
       featureImageID: String
       ): Product
     createAccount(userInput: CreateUserInput): User
-    createOrder(orderInput: OrderInput): Order
+    createOrder(
+      user: String!
+    ): Order
   }
 `;

@@ -13,6 +13,7 @@ const dotenv = require("dotenv");
   const PORT = process.env.PORT || 5000;
   const app = express();
   app.use(bodyParser.json());
+  app.use(cors());
   mongoose.connect(`${process.env.MONGO_URI}`);
   const connection = mongoose.connection;
   connection.once("open", () => {
@@ -37,15 +38,14 @@ const dotenv = require("dotenv");
   await server.start();
   server.applyMiddleware({
     app,
-    cors: false,
     path: "/api",
   });
-  app.use(
-     cors({
-       origin: "*",
-       credentials: true,
-     }),
-  );
+  // app.use(
+  //    cors({
+  //      origin: "*",
+  //      credentials: true,
+  //    }),
+  // );
   app.listen(PORT, () => {
     console.log(`🚀 server started on http://localhost:${PORT}`);
   });

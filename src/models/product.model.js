@@ -13,6 +13,7 @@ const productSchema = new Schema(
     featureImage: { type: String },
     featureImageID: { type: String },
     price: { type: Number, required: true },
+    stock: { type: Number, required: true },
     rating: { type: Number, required: true, default: 0 },
     brand: { type: Schema.Types.ObjectId, ref: "Brand" },
     category: { type: Schema.Types.ObjectId, ref: "Category" },
