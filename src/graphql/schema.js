@@ -6,9 +6,6 @@ exports.typeDefs = gql`
     city: String!
     postalCode: String!
   }
-  input GetProductInput {
-    slug: String!
-  }
   input ItemInput {
     product: String!
     quantity: Int!
@@ -76,7 +73,7 @@ exports.typeDefs = gql`
   }
 
   type Query {
-    getProduct(getProductInput: GetProductInput): Product
+    getProduct(slug: String!): Product
     loginUser(email: String!, password: String!): UserAuth
     products: [Product!]
     categories: [Category!]

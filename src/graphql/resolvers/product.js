@@ -22,10 +22,10 @@ exports.productQuery = {
       throw err;
     }
   },
-  getProduct: async (args) => {
+  getProduct: async (_, args) => {
     try {
       const product = await Product.findOne({
-        slug: args.getProductInput.slug,
+        slug: args.slug,
       });
       const result = {
         ...product._doc,

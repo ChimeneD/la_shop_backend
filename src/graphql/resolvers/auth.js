@@ -62,5 +62,5 @@ exports.authMutation = {
     } catch (err) {
       return err;
     }
-  }
+  },
 };
