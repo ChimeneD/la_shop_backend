@@ -97,4 +97,15 @@ exports.orderMutation = {
       throw error;
      }
   },
+  updateOrder: async(parent, args)=>{
+    try {
+      const order = await Order.findById(args.id);
+      order.paid = args.paid;
+      order.isDelivered = args.delivered;
+      const result = await order.save();
+      return { ...result._doc, _id: result._doc._id.toString() };
+    } catch (err) {
+      throw err
+    }
+  }
 };

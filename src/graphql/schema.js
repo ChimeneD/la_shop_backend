@@ -119,5 +119,10 @@ exports.typeDefs = gql`
       totalPrice: Float!
       user: String!
     ): Order
+    updateOrder(
+      id: String
+      paid: Boolean
+      delivered: Boolean
+    ): Order
   }
 `;
