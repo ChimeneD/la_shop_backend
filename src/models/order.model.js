@@ -7,7 +7,7 @@ const orderSchema = new Schema(
     items: [
       {
         product: { type: Schema.Types.ObjectId, ref: "Product" },
-        count: { type: Number },
+        quantity: { type: Number },
         totalPrice: { type: Number }
       }
     ],
@@ -19,7 +19,12 @@ const orderSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: "User"
-    }
+    },
+    name: {type: String, required: true},
+    totalPrice: {type: Number, required: true},
+    paid: {type: Boolean, required: true, default: false},
+    isDelivered: {type: Boolean, required: true, default: false},
+    paymentMethod: {type: String, required: true},
   },
   {
     timestamps: true

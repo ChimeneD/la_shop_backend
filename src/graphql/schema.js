@@ -6,47 +6,14 @@ exports.typeDefs = gql`
     city: String!
     postalCode: String!
   }
-  input CreateUserInput {
-    email: String!
-    firstName: String!
-    lastName: String!
-    role: String
-    password: String!
-  }
   input GetProductInput {
     slug: String!
   }
-  input InventoryInput {
-    product: String!
-    stock: Int!
-  }
   input ItemInput {
     product: String!
-    count: Int!
+    quantity: Int!
     total: Float!
   }
-  input LoginInput {
-    email: String!
-    password: String!
-  }
-  input OrderInput {
-    user: String!
-    items: [ItemInput!]!
-    address: AddressInput!
-  }
-  input ProductInput {
-    slug: String!
-    iamgeID: String!
-    image: String!
-    name: String!
-    price: Float!
-    category: String
-    description: String!
-  }
-  input ProductInventoryInput {
-    _id: String!
-  }
-
   type Address {
     street: String
     city: String
@@ -64,13 +31,19 @@ exports.typeDefs = gql`
   }
   type Item {
     product: Product
-    count: Int
+    quantity: Int
     total: Float
   }
   type Order {
+    _id: ID
     items: [Item]
     address: Address
     user: User
+    name: String
+    totalPrice: Float
+    paid: Boolean
+    isDelivered: Boolean
+    paymentMethod: String
   }
   type Product {
     _id: ID
@@ -108,27 +81,42 @@ exports.typeDefs = gql`
     products: [Product!]
     categories: [Category!]
     brands: [Brand!]
+    orders(user: String!): [Order!]
+    allOrders: [Order!]
+    order(id: String!): Order
   }
 
   type Mutation {
     addCategory(name: String!): Category
     addBrand(name: String!): Brand
     addProduct(
-      name: String!,
-      slug: String!,
-      image: String!,
-      imageID: String!,
-      price: Float!,
-      stock: Int!,
-      description: String!,
-      brand: String!,
-      category: String!,
-      feature: Boolean,
-      featureImage: String,
+      name: String!
+      slug: String!
+      image: String!
+      imageID: String!
+      price: Float!
+      stock: Int!
+      description: String!
+      brand: String!
+      category: String!
+      feature: Boolean
+      featureImage: String
       featureImageID: String
-      ): Product
-    createAccount(userInput: CreateUserInput): User
+    ): Product
+    createAccount(
+      email: String!
+      firstName: String!
+      lastName: String!
+      role: String
+      password: String!
+    ): User
     createOrder(
+      address: AddressInput!
+      item: [ItemInput!]!
+      name: String!
+      paid: Boolean
+      paymentMethod: String!
+      totalPrice: Float!
       user: String!
     ): Order
   }

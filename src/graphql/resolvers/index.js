@@ -1,6 +1,6 @@
 const { authQuery, authMutation } = require("./auth");
 const { categoryQuery, categoryMutation } = require("./categories");
-const { orderResolver } = require("./order");
+const { orderQuery, orderMutation } = require("./order");
 const { productQuery, productMutation } = require("./product.inventory");
 
 
@@ -8,11 +8,13 @@ exports.resolvers = {
   Query: {
     ...authQuery,
     ...categoryQuery,
-    ...productQuery
+    ...productQuery,
+    ...orderQuery
   },
   Mutation: {
     ...authMutation,
     ...categoryMutation,
-    ...productMutation
+    ...productMutation,
+    ...orderMutation
   }
 };
